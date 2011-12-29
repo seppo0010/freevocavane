@@ -72,6 +72,7 @@ class FCMenu(Item):
     def selected_quality(self, arg, menuw):
         api, show, season, episode, host, quality = arg
 
+        self.menuw = menuw
         self.file_object = episode
         self.selected_host = host
         self.selected_quality = quality
@@ -87,12 +88,29 @@ class FCMenu(Item):
         filename = self.file_path.replace(".mp4", ".srt")
         url_open(url, filename=filename)
 
+        print episode.file_hosts[host][quality]
+        self.gui_manager.background_task(self.pre_download, self.play)
         self.downloader = Downloaders.get(host, self.gui_manager, episode.file_hosts[host][quality])
-        self.downloader.process_url(self.play, self.file_path)
+        self.downloader.process_url(None, self.file_path)
+
+    def pre_download(self):
+        """ Downloads some content to start safely the player. """
+        while not os.path.exists(self.file_path):
+            time.sleep(1)
+
+        if self.downloader.file_size != 0:
+            # Waits %1 of the total download
+            percent = self.downloader.file_size * 0.01
+
+            while self.downloader.downloaded_size < percent:
+                time.sleep(1)
+        else:
+            # Waits 2MB, just an arbitrary amount
+            while self.downloader.downloaded_size < 2 * 1024 * 1024:
+                time.sleep(0.5)
 
     def play(self):
-        print self.file_path
-        self.video_item = VideoItem('file://' + self.file_path, None)
+        self.video_item = VideoItem('file://' + self.file_path, self.menuw)
         self.video_item.play()
 
     def get_filename(self, file_object):
