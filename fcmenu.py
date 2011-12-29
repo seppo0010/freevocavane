@@ -84,6 +84,7 @@ class FCMenu(Item):
         box.destroy()
 
         if os.path.exists(self.file_path):
+            # TODO: check file completition?
             self.play()
             return
 
