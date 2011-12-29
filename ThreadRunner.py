@@ -80,6 +80,6 @@ class ThreadRunner(threading.Thread):
             return True
 
         t = kaa.MainThreadCallback(self.callback, result)
-	t()
+        t()
 
         return False
