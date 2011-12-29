@@ -72,6 +72,7 @@ class FCMenu(Item):
     def selected_quality(self, arg, menuw):
         api, show, season, episode, host, quality = arg
 
+        self.video_item = None
         self.menuw = menuw
         self.file_object = episode
         self.selected_host = host
@@ -115,6 +116,8 @@ class FCMenu(Item):
                 time.sleep(0.5)
 
     def play(self):
+        if self.video_item:
+            return
         self.video_item = VideoItem('file://' + self.file_path, None)
         self.video_item.play(menuw=self.menuw)
 
