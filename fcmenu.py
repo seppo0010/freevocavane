@@ -83,6 +83,10 @@ class FCMenu(Item):
         time.sleep(2)
         box.destroy()
 
+        if os.path.exists(self.file_path):
+            self.play()
+            return
+
         url_open = UrlOpen()
         url = self.file_object.get_subtitle_url(quality=self.selected_quality)
         filename = self.file_path.replace(".mp4", ".srt")
@@ -110,8 +114,8 @@ class FCMenu(Item):
                 time.sleep(0.5)
 
     def play(self):
-        self.video_item = VideoItem('file://' + self.file_path, self.menuw)
-        self.video_item.play()
+        self.video_item = VideoItem('file://' + self.file_path, None)
+        self.video_item.play(menuw=self.menuw)
 
     def get_filename(self, file_object):
         """ Returns the file path of the file. """
